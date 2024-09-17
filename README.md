@@ -67,7 +67,7 @@ sudo apt-get install clang llvm
 
 # cloning yadns controller (y2) repo with
 # submodules (libbpf)
-git clone --recurse-submodules https://github.com/slayer1366/yadns-controller
+git clone --recurse-submodules https://github.com/yandex/yadns-controller
 
 # making y2 and bpf programs
 cd yadns-controller && make -f Makefile
