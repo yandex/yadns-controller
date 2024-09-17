@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/slayer1366/yadns-controller/pkg/plugins"
+	"github.com/yandex/yadns-controller/pkg/plugins"
 )
 
 func (t *TReceiverPlugin) TickStateStep(mode string) {

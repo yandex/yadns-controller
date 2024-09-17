@@ -7,7 +7,7 @@ import (
 
 	yaml "gopkg.in/yaml.v3"
 
-	"github.com/slayer1366/yadns-controller/pkg/internal/log"
+	"github.com/yandex/yadns-controller/pkg/internal/log"
 )
 
 const (

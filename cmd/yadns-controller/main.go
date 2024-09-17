@@ -7,7 +7,7 @@ package main
 import (
 	"os"
 
-	"github.com/slayer1366/yadns-controller/cmd/yadns-controller/cmd"
+	"github.com/yandex/yadns-controller/cmd/yadns-controller/cmd"
 )
 
 const (

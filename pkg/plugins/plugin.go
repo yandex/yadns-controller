@@ -6,7 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
 
-	"github.com/slayer1366/yadns-controller/pkg/internal/config"
+	"github.com/yandex/yadns-controller/pkg/internal/config"
 )
 
 // possible options override configuration

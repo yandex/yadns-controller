@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/slayer1366/yadns-controller/pkg/plugins/metrics"
-	"github.com/slayer1366/yadns-controller/pkg/plugins/monitor"
+	"github.com/yandex/yadns-controller/pkg/plugins/metrics"
+	"github.com/yandex/yadns-controller/pkg/plugins/monitor"
 )
 
 const (

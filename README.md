@@ -63,7 +63,10 @@ Prerequites for building
 
 ```sh
 # installing clang and llvm
-sudo apt-get install clang llvm
+sudo apt install make clang llvm
+
+# installing golang (expecting version >= 1.20)
+sudo apt install golang
 
 # cloning yadns controller (y2) repo with
 # submodules (libbpf)

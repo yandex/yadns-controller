@@ -9,7 +9,7 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/slayer1366/yadns-controller/pkg/plugins/offloader"
+	"github.com/yandex/yadns-controller/pkg/plugins/offloader"
 )
 
 type TObjectFilter struct {

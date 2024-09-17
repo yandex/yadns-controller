@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/slayer1366/yadns-controller/pkg/controller"
+	"github.com/yandex/yadns-controller/pkg/controller"
 )
 
 var (

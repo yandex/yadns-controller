@@ -1,4 +1,4 @@
-module github.com/slayer1366/yadns-controller
+module github.com/yandex/yadns-controller
 
 go 1.21
 

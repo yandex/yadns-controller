@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/slayer1366/yadns-controller/pkg/internal/config"
-	"github.com/slayer1366/yadns-controller/pkg/plugins"
+	"github.com/yandex/yadns-controller/pkg/internal/config"
+	"github.com/yandex/yadns-controller/pkg/plugins"
 )
 
 func NewTestConfig(t *testing.T) (*config.TGlobal, error) {

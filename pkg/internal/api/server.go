@@ -12,7 +12,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/slayer1366/yadns-controller/pkg/internal/config"
+	"github.com/yandex/yadns-controller/pkg/internal/config"
 )
 
 const (

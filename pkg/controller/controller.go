@@ -11,15 +11,15 @@ import (
 	"golang.org/x/sync/errgroup"
 	yaml "gopkg.in/yaml.v3"
 
-	"github.com/slayer1366/yadns-controller/pkg/internal/api"
-	"github.com/slayer1366/yadns-controller/pkg/internal/config"
-	"github.com/slayer1366/yadns-controller/pkg/internal/log"
-	"github.com/slayer1366/yadns-controller/pkg/plugins"
-	"github.com/slayer1366/yadns-controller/pkg/plugins/example"
-	"github.com/slayer1366/yadns-controller/pkg/plugins/metrics"
-	"github.com/slayer1366/yadns-controller/pkg/plugins/monitor"
-	"github.com/slayer1366/yadns-controller/pkg/plugins/offloader"
-	"github.com/slayer1366/yadns-controller/pkg/plugins/receiver"
+	"github.com/yandex/yadns-controller/pkg/internal/api"
+	"github.com/yandex/yadns-controller/pkg/internal/config"
+	"github.com/yandex/yadns-controller/pkg/internal/log"
+	"github.com/yandex/yadns-controller/pkg/plugins"
+	"github.com/yandex/yadns-controller/pkg/plugins/example"
+	"github.com/yandex/yadns-controller/pkg/plugins/metrics"
+	"github.com/yandex/yadns-controller/pkg/plugins/monitor"
+	"github.com/yandex/yadns-controller/pkg/plugins/offloader"
+	"github.com/yandex/yadns-controller/pkg/plugins/receiver"
 )
 
 type ControllerOptions struct {

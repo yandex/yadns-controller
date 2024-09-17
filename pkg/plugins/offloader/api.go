@@ -8,7 +8,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/slayer1366/yadns-controller/pkg/internal/api"
+	"github.com/yandex/yadns-controller/pkg/internal/api"
 )
 
 func (t *TOffloaderPlugin) SetupMethods(group *echo.Group) {

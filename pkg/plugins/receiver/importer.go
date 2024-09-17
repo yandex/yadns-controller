@@ -10,7 +10,7 @@ import (
 	"github.com/miekg/dns"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/slayer1366/yadns-controller/pkg/plugins/offloader"
+	"github.com/yandex/yadns-controller/pkg/plugins/offloader"
 )
 
 // importer worker implements cache import for axff

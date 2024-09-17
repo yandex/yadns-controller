@@ -33,7 +33,7 @@ ARCH = $(shell uname -m | sed 's/x86_64/x86/' | sed 's/aarch64/arm64/')
 COMMON_CLDFLAGS = -fcolor-diagnostics -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -g -fPIC -g -O2
 
 # indicating header files should fix bpf subdirectory search problem
-EBPF_CLDFLAGS = $(COMMON_CLDFLAGS) -D__KERNEL__ -D__TARGET_ARCH_x86 --target=bpf -Wno-macro-redefined -D__BPF_TRACING__ -D__x86_64__ -DCORE -march=bpf -isystem $(LIBBPF)
+EBPF_CLDFLAGS = $(COMMON_CLDFLAGS) -D__KERNEL__ -D__TARGET_ARCH_x86 --target=bpf -Wno-macro-redefined -D__BPF_TRACING__ -D__x86_64__ -DCORE -isystem $(LIBBPF)
 
 app: $(TARGET)
 .PHONY: app

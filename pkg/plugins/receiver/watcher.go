@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/slayer1366/yadns-controller/pkg/plugins/offloader"
+	"github.com/yandex/yadns-controller/pkg/plugins/offloader"
 )
 
 const (

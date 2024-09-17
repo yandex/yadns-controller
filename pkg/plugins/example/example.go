@@ -7,8 +7,8 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/slayer1366/yadns-controller/pkg/plugins"
-	"github.com/slayer1366/yadns-controller/pkg/plugins/metrics"
+	"github.com/yandex/yadns-controller/pkg/plugins"
+	"github.com/yandex/yadns-controller/pkg/plugins/metrics"
 )
 
 func (t *TExamplePlugin) Run(ctx context.Context, overrides *plugins.OverrideOptions) error {

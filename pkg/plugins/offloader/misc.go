@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/slayer1366/yadns-controller/pkg/internal/config"
+	"github.com/yandex/yadns-controller/pkg/internal/config"
 )
 
 type TConfigNetdevProg struct {

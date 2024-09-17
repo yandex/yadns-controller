@@ -11,7 +11,7 @@ import (
 	"github.com/cilium/ebpf/link"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/slayer1366/yadns-controller/pkg/internal/config"
+	"github.com/yandex/yadns-controller/pkg/internal/config"
 )
 
 const (

@@ -10,8 +10,8 @@ import (
 
 	yaml "gopkg.in/yaml.v3"
 
-	"github.com/slayer1366/yadns-controller/pkg/plugins"
-	"github.com/slayer1366/yadns-controller/pkg/plugins/monitor"
+	"github.com/yandex/yadns-controller/pkg/plugins"
+	"github.com/yandex/yadns-controller/pkg/plugins/monitor"
 )
 
 const (

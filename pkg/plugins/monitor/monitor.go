@@ -11,8 +11,8 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/slayer1366/yadns-controller/pkg/internal/config"
-	"github.com/slayer1366/yadns-controller/pkg/plugins"
+	"github.com/yandex/yadns-controller/pkg/internal/config"
+	"github.com/yandex/yadns-controller/pkg/plugins"
 )
 
 // check function to add in monitoring chain

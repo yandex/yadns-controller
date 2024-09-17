@@ -11,9 +11,9 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/slayer1366/yadns-controller/pkg/internal/api"
-	"github.com/slayer1366/yadns-controller/pkg/internal/config"
-	"github.com/slayer1366/yadns-controller/pkg/plugins"
+	"github.com/yandex/yadns-controller/pkg/internal/api"
+	"github.com/yandex/yadns-controller/pkg/internal/config"
+	"github.com/yandex/yadns-controller/pkg/plugins"
 )
 
 const (
