@@ -1,0 +1,564 @@
+# controller and plugins configuration, each plugin
+# should have its own configuration processing, command
+# line control (if any), metrics and monitoring
+log:
+   # logging format could be "string" or "json"
+   format: "string"
+
+   # "stdout" - output to console (actually to syslog)
+   # or could be defined as log path like
+   # /var/log/yadns-controller/yadns-controller.log
+   log: "stdout"
+
+   # level of debugging could be "debug", "info", could be
+   # overrided by command line switch
+   level: "debug"
+
+controller:
+
+    # api options, api returns metrics and wait for
+    # some control signals, below some options for
+    # http api server
+    api:
+
+      # by default we have [::1]:5053 http tcp
+      # lister handler
+      listen: "[::1]:5055"
+
+      # debug option for http server
+      debug: true
+
+# a list of plugins of different controller stages
+# processing, receiver, controlling, cooker
+# monitoring and metrics exporting, misc?
+plugins:
+
+    # monitoring type of plugins: metrics, sending
+    # metrics to solomon
+    monitoring:
+
+      # metrics plugin implements logics to store
+      # and aggregate some type of metrics, exporting
+      # them to api
+      "metrics":
+
+          # could be diabled or enabled
+          enabled: true
+
+      # monitor workers calculates some current 
+      # program inner state and make some actions or
+      # export such states for external monitoring
+      # systemts
+      "monitor":
+
+          # could be diabled or enabled
+          enabled: true
+            
+    # misc plugins: also includes example plugin to
+    # show all iteractions with controller
+    misc:
+
+      # example plugin does simple thing: processes
+      # configuration, starting thread, each N seconds
+      # making log output, counting some metrics,
+      # exporting them, could have command line
+      # runtime parameter to change
+      "example":
+
+          # could be diabled or enabled
+          enabled: true
+
+          # watcher cycle to make some example things:
+          # logging, exporting metrics
+          watcher:
+
+            # interval to start watch, in seconds
+            interval: 120 
+
+    # xdp plugins: loading and unloading xdp program
+    # managing bpf maps as configurations
+    bpf:
+
+      # xdp worker plugin runs XDP program as dns
+      # server for configured DNS records. It uses
+      # some assumptions abount kernel and
+      # evironment (internal named offloader)
+      "offloader":
+
+          # could be enabled of disable, e.g.
+          # running only socket selection or 
+          # even only affinity or xdp and affinity
+          enabled: true
+
+          # containers could have some specific options
+          # for bpf programs: bpffs mount and unlimit
+          # memlock
+          controls:
+
+             # if program should mount bppfs via 
+             # mount call (it also checks that the system
+             # does not have mounted bpf), default false
+             bpffs: true
+
+             # for some reason BPF_MAP_TYPE_LPM_TRIE maps
+             # requires (at least 5.4 in container enviroment
+             # unlimitng memlocking (should be set for RTC)
+             # default false
+             unlimit-memlock: false
+
+          # bpf and xdp options
+          options:
+
+             # interface to bind xdp program, see kernel
+             # requirements, lo interface could form DNS
+             # responses for earlier kernels (e.g. 5.15)
+             interface: "lo"
+      
+             # dnsgurad way to handle dst addrs +v4, please
+             # be sure to have all VS included also, ns1+ns2, 
+             # ns3+ns4, ns5+ns6, ns+cache, dns+cache,
+             # ns+cache-*, loopback?
+             addrs:
+              - 127.0.0.1/8
+              - ::1/128
+               
+             # bpf program object file
+             path: "/usr/lib/yadns-xdp.bpf.o"
+
+             # bpf program has a list of pinned bpf maps
+             # with root path defined as (default
+             # "/sys/fs/bpf/xdp/globals")
+             pinpath: "/sys/fs/bpf/yadns-xdp/xdpdns"
+
+             # a list of options that could be changed
+             # in runtime, dryrun, xdpcap via api or
+             # direct call as command line
+             bpf-dryrun: false
+
+             # xdpcap enables tcpdump like dump packets
+             # (only output dns response for now)
+             bpf-xdpcap: false
+
+             # bpf program could gather metrics: rps, histograms
+             # and min, max, avg counters of times
+             bpf-metrics: true
+
+             # for cache requests we should add random
+             # TTL modification (as unbound does)
+             response-random-ttl: true
+
+             # response could have a list of flags, e.g.
+             # cache could have RD, authority AA and
+             # so on, please be careful, possible flags
+             # "RD", "AA", "MBZ"
+             response-flags: [ "RD", "MBZ" ]
+               
+          # loader option for XDP module to either by
+          # a primary XDP program or a secondary. Primary
+          # variant loads bpf xdp and attach it
+          # to ethernet controller. Secondary, expects that
+          # some program is already attached to XDP and
+          # exports BPF tail hook. "auto" mode - automatically
+          # detects current environment
+          loader:
+
+             # mode could be secondary, primary or auto, by
+             # default we have here "primary"
+             mode: "primary"
+
+             # hook for secondary mode, pinned in sys fs bpf
+             hook:
+
+                 # secondary expects that primary exports
+                 # bpf jump table as map
+                 pinpath: "/sys/fs/bpf/dnsguard/chain_hook"
+
+                 # index for program to attach in chain_hook
+                 # for now it could be [0..4], here
+                 # should be "0"
+                 index: [ 0 ]
+
+    # data plugins: we could receive data for dns zones
+    # from different sources
+    data:
+
+      # receiver worker could get a list of zones
+      # from http or file sources, AXFR and IXFR dns
+      # servers. Blob transfers should be implemented
+      # later
+      "receiver":
+
+          # global plugin enable confiugation
+          enabled: true
+
+          # to import recevied data into bpf map we need
+          # know the pinpath, see also controller option
+          pinpath: "/sys/fs/bpf/yadns-xdp/xdpdns"
+
+          # global options for all adapters, e.g. incremental
+          # updates sync method. if set to true, we calculate 
+          # the difference (even if no IXFR with some fallback
+          # to AXFR)
+          options:
+
+             # receiver tries to get incremental updates
+             # if no IXFR available it sets full sync,
+             # in case if no blob exists and we could not
+             # get update increment
+             incremental: true
+
+             # cooker makes a blob files for each zone
+             # as snapshot. before starting it checks
+             # such snapshot and could use them per zone
+             snapshots:
+
+               # directory to write snapshot blob
+               directory: "/var/cache/yadns-xdp"
+
+               # should controller read the last snapshots
+               # as it starts or use receiver to get
+               # zones states
+               read-onstartup: true
+
+               # number of seconds for snapshot to be valid
+               # for incremental changes calculations
+               read-validinterval: 1200
+
+               # number of seconds for snapshot to be valid
+               # for first read as program starts
+               startup-validinterval: 300
+            
+          # each zone could have a list of http URLs or files
+          # to update periodically zone content
+          http-transfer:
+
+             # we have to disable it for some time
+             enabled: true
+            
+             # zones configurations could be placed in
+             # configuration here or in directory defined
+             zones:
+
+                 # T.B.D. directory of the zone definitions could be
+                 # the same for all adapters the type of zone
+                 # adpater is detected from yaml zone
+                 # configuration
+                 zones-directory: "/etc/y2/zones.conf.d"
+
+                 # type of import could be incremental or full
+                 # if incremental is set to false?
+                 incremental: true
+
+                 # a map of aliases to use in secondary zones 
+                 # configuratons below
+                 primary:
+                   "localhost": "http://[::1]:5050/list_zone_data/raw"
+
+                 # secondary zone definitions could be
+                 # included below in placed as yaml files
+                 # in directory
+                 secondary:
+
+                    # zone should contain primaries slice
+                    # and some optional configurations
+                    # overrided global values, refresh is SOA
+                    # refresh override
+                   "example.net":
+                      enabled: false
+                      type: "http"
+                      primary: [ "localhost" ]
+                      refresh: 60
+
+                   # example for zone from file, type "file"?
+                   "example.com":
+                      enabled: true
+                      type: "http"
+                      primary: [ "file:////var/tmp/example.com" ]
+                      refresh: 5
+
+                   # random generated content of zone, do we have refresh for
+                   # all zones individually?
+                   "example.ru":
+                      enabled: false
+                      type: "random"
+                      primary: [ "localhost" ]
+                      refresh: 60
+
+          # rfc5936 defines an AXFR protocol and rfc1996
+          # notify scheme NOTIFY. use here just to define
+          # this type of data adapter "zone-transfer via
+          # "axfr"
+          axfr-transfer:
+          
+             # could be disabled and not processed
+             # by the whole section below
+             enabled: true
+
+             # method to receive data via AXFR or via SOA,
+             # "axfr" method means that we transfer data
+             # periodically without respect of SOA serial
+
+             # T.B.D. "soa" send SOA request and check if serial
+             # number is changed, and then we should generate
+             # AXFR or IXFR or (a) soa+axfr, (b) soa+ixfr
+             transfer-via: "axfr"
+  
+             # method to check if current version of snapshot
+             # diffes from previous and set dirty flag, "soa"
+             # means that we check serial number and detect
+             # if snapshots differs via serial number
+             # comparision, "rrsets+data" we should compare
+             # by map rrsets data comparision rrset by rrset
+             dirty-via: "rrsets+data"
+            
+             # notify server configuration "allow
+             # notify from" is defined in each zone
+             # or globally here
+             notify:
+
+                # enabling of disabling NOTIFY processing 
+                enabled: true
+
+                # listen is an array of triples in the form instead of
+                # ip addresses we could use "auto-IP6", "auto-IP4", expecting
+                # here udp only?
+                listen: [ "udp://:1153" ]
+
+                # udp packets buffer size, be default it
+                # sets to 512 bytes
+                udp-buffer-size: 512
+
+                # number of workers, if workers > 1 when we set
+                # reuseport on socket, if worker == 1, no reuse port
+                # option is set
+                workers: 2
+ 
+                # notifier also uses a pool of appling workers
+                # for out workers on apply stage we called them
+                # little "cookers"
+                cookers:
+
+                   # number of cookers workers for logics:
+                   # (1) send SOA request (or get serial from NOTIFY)
+                   # (2) send IXFR request (as usual with serial from (1))
+                   # (3) form "actions"
+                   # (4) make syncMap without BLOB update
+                   workers: 4
+        
+                # T.B.D. a list of IP addresses to accept notification for
+                # zone update (could be overridden by each zone
+                # definition below
+                allow-notify:
+                   - "2a02:6b8:c02:707:0:433f:beef:ddf1"
+                   - "2a02:6b8:c0e:103:0:433f:beef:ddf1"
+                   - "::1"
+
+                # T.B.D. some global rate limits for zones
+                # (use bind terminology)
+                notify-rate: 20
+                startup-notify-rate: 1
+
+             # transfer configuration defines settings
+             # for AXFR/IXFR transfer workers, e.g. number
+             # of max simulteneously performed transfers
+             transfer:
+
+                # max number of transfers initated by
+                # transfer manager (preventing from
+                # master ddos)
+                transfers-in: 10
+
+                # method to transfer zones, periodifcally
+                # or by notify processing, "notify", "interval" 
+                transfers-via: [ "notify", "interval" ]
+
+                # please note that axfr or soa request and
+                # soa+axfr is defined in "transfer-via", interval
+                # below is defined in seconds
+                transfers-interval: 10
+
+             # zones configurations could be placed in
+             # configuration here or in directory defined
+             zones:
+
+                # T.B.D. directory to place zones yaml files,
+                # reads them on start and addes to configuration
+                # defined below
+                zones-directory: "/etc/y2/zones.conf.d"
+
+                # secondary zone definitions could be
+                # included below in placed as yaml files
+                # in directory
+                secondary:
+
+                   # zone should contain primaries slice
+                   # and some optional configurations
+                   # overrided global values, refresh is SOA
+                   # refresh override, setting "type" is optional
+                   # but should be used in yaml file
+                   # configuration, we also will need
+                   # TSIG key (T.B.D)
+                  "example.org":
+                     enabled: false
+                     type: "axfr"
+                     primary: [ "[2a02:6b8:0:3400:0:45b:0:9]:53" ]
+                     refresh: 10
+                     allow-notify:
+                       - "2a02:6b8:c02:5f2:0:433f:cc:11"
+                       - "2a02:6b8:c03:790:0:433f:cc:11"
+
+          # verifier - a process to verify data correctness
+          # between current memory zones snapshots periodically
+          # and (if set right after cooker)
+          verifier:
+
+             # we have to disable it for some time
+             enabled: true
+
+             # a period to check zones with random
+             # offset to the initial point of time
+             interval: 600
+
+             # verify as cooker finished (we expect here
+             # almost always be a zero in difference)
+             verify-oncook: true
+
+          # cooker should make a blob of data received
+          # from receiver, it checks every stated below
+          # seconds and checks if blob should be prepared
+          # it reads dirty flag for each zone state if
+          # at least one is dirty we need cook a blob
+          cooker:
+
+            # for some debug reason we could turn off
+            # a cooker thread
+            enabled: true
+
+            # we have dryrun method of cooking data, it
+            # does mean that all data processing and
+            # snapshot written but no bpf.Map updated
+            dryrun: false
+
+            # a period to check dirty zones states flags
+            # and make a decision to cook a blob in
+            # seconds, in prod it should be 1-5 seconds
+            interval: 5
+
+            # cooker could write snapshots and could
+            # read the last snapshot as it starts
+            snapshots:
+
+               # if no snapshots enabled controller transfers
+               # zone data as it starts
+               enabled: true
+
+               # should controller read the last snapshots
+               # as it starts or use receiver to get
+               # zones states
+               read-onstartup: true
+
+               # number of seconds for snapshot to be valid
+               read-validinterval: 1200
+
+               # directory to write snapshot blob
+               directory: "/var/cache/yadns-xdp"
+
+               # number of snapshots to keep, removing
+               # outdated by garbage collector
+               keep: 10
+
+          # monitor collects metrics (a) exported from bpf
+          # via maps (b) go runtime metrics (c) process metrics
+          # for recevier, cooker, verifier. Export current values
+          # via api call. Calculate some thresholds for critical
+          # values and take some actions.
+          monitor:
+
+             # watcher periodiccaly sees metrics from
+             # collector and calculate current state, if
+             # state is CRITICAL it could make some actions
+             # e.g. set dryrun mode to ON, also it exports
+             # curret watcher state via API
+             watcher:
+
+               # enable active monitoring
+               enabled: true
+
+               # interval to watch situation, also it could
+               # watch some metics in the past (e.g. to 
+               # calculate different. collector has historical
+               # metrics of keep count, in seconds
+               interval: 17
+
+               # rules to watch and calculate the state
+               # snapshot age should be limitted
+               # by some high value threshold, in seconds
+               rules:
+
+                  # cooker snapshot age should be [600, 1200]
+                  "cooker-snapshotsage-max":
+                      higher: 600
+                      lower: 100
+                      actions: [ "dryrun" ]
+
+             # at least one is dirty we need cook a blob
+             collector:
+
+                # enabling periodic collecting metrics from
+                # a list of subsystems: bpf, runtime and
+                # different processes (receiver, cooker and
+                # verifier push metrics into collector)
+                enabled: true
+
+                # collector dumps every number of seconds
+                # collected metrics, seconds
+                dump-interval: 60
+
+                # verbose - dump each portion of metrics gathered
+                verbose: false
+
+                # different parts of monitoring metrics could
+                # be processed with different time intervals, e.g.
+                # bpf histograms could have 1 min interval
+                # as all the rest 10 seconds
+                bpf:
+
+                   intervals:
+
+                      # time interval in seconds to get current
+                      # values of corresponding maps and push
+                      # them into metrics slice of monitor
+                      metrics: 10
+
+                      # time interval for hystogram (we have time
+                      # processing here), set zero to disable
+                      # histograms at all
+                      histograms: 60
+
+                      # after interval of fetching metrics we could
+                      # zero counters in some cases
+                      zero: true
+
+                # some runtime metrics or recalculations
+                # of historical data gathered in collector
+                # metrics slice
+                runtime:
+
+                   intervals:
+
+                      # time interval in seconds to get current
+                      # values of golang runtime: memory, goroutine
+                      # statistics
+                      metrics: 10
+
+                # garbage colleting is defined by interval and number
+                # of historical data to keep
+                garbage-collector:
+
+                   # starting garbage collecting every seconds
+                   # defined in interval section below
+                   interval: 120
+
+                   # keeping the most actual data in memory (e.g.
+                   # for averaging)
+                   keep: 10
