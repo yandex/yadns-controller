@@ -55,7 +55,7 @@ A response DNS packet is formed as follows:
 
 ## Build
 Prerequites for building
-* recent versions of unbuntu: **focal 20.04**, **jammy 22.04**
+* recent versions of unbuntu: **focal 20.04**, **jammy 22.04**, **noble 24.04**
 * linux kernel **>= 5.15** 
 * golang [[1](https://go.dev/dl/)], versions **>= 1.20** 
 * clang and llvm
@@ -87,7 +87,7 @@ make run
 #DEBU[2024-07-31 14:45:55.814261] [3376865]:[118] (xdp) (run) bpf:'yadns-controller/yadns-xdp.bpf.o' on:'lo' waiting...
 ```
 
-Running DNS resolve commands in another console we ensure that XDP program is responding to our requests - it adds specific flag ``MBZ`` to distinguish such responses.
+Wait some time (up to 10 seconds) to have controller sync BPF maps and run DNS resolve commands in another console we ensure that XDP program is responding to our requests - it adds specific flag ``MBZ`` to distinguish such responses.
 ```sh
 # resolving example.com as we have such zone
 # configured in y2

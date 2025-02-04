@@ -53,17 +53,17 @@ struct {
 
 // response flag selection, using in AA (authority) or
 // (RD) recursion variants
-static volatile const bool yadns_xdp_resp_flag_aa = false;
-static volatile const bool yadns_xdp_resp_flag_rd = false;
-static volatile const bool yadns_xdp_resp_flag_mbz = false;
+volatile const bool yadns_xdp_resp_flag_aa = false;
+volatile const bool yadns_xdp_resp_flag_rd = false;
+volatile const bool yadns_xdp_resp_flag_mbz = false;
 
 // random ttl switch (could be used in AA responses)
-static volatile const bool yadns_xdp_resp_random_ttl = false;
+volatile const bool yadns_xdp_resp_random_ttl = false;
 
 // gathering bpf metrics: rps, times histograms, avg, max, min
-static volatile const bool yadns_xdp_bpf_metrics_enabled = true;
-static volatile const bool yadns_xdp_bpf_xdpcap_enabled = true;
-static volatile const bool yadns_xdp_bpf_dryrun = false;
+volatile const bool yadns_xdp_bpf_metrics_enabled = true;
+volatile const bool yadns_xdp_bpf_xdpcap_enabled = true;
+volatile const bool yadns_xdp_bpf_dryrun = false;
 
 #define JERICO_RUNTIME_CONFIG_DYRUN 0
 
